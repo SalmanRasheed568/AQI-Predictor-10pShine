@@ -1,0 +1,33 @@
+name: Hourly Feature Pipeline
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour
+  workflow_dispatch: {}     # allow manual trigger from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  run-feature-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run feature pipeline
+        run: python src/feature_pipeline.py
+
+      - name: Commit updated feature store
+        run: |
+          git config --global user.name "aqi-bot"
+          git config --global user.email "aqi-bot@users.noreply.github.com"
+          git add data/features.csv data/raw_hourly_cache.csv
+          git diff --cached --quiet || git commit -m "chore: hourly feature update [skip ci]"
+          git push
