@@ -4,7 +4,7 @@ import sys
 
 import pandas as pd
 import plotly.graph_objects as go
-import streamlit as st
+import streamlit as st  # pyright: ignore[reportMissingImports]
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 import config
